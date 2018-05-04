@@ -1,0 +1,13 @@
+[Unit]
+Description=Consul Template Agent
+Requires=network-online.target
+After=network.target consul.service
+
+[Service]
+Restart=on-failure
+ExecStart=/sbin/consul-template -config "/etc/consul-template.d"
+ExecReload=/bin/kill -HUP $MAINPID
+LimitNOFILE=131072
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,6 @@
+consul = "ec2-52-3-230-224.compute-1.amazonaws.com:8500"
+template {
+  source      = "/root/haproxy.cfg.tpl"
+  destination = "/etc/haproxy/haproxy.cfg"
+  command     = "service haproxy restart"
+}

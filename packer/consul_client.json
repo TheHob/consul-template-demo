@@ -1,0 +1,29 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "ssh_pty": "true",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "us-east-1",
+    "source_ami": "ami-6d1c2007",
+    "instance_type": "t2.micro",
+    "ssh_username": "centos",
+    "ami_name": "consul_client {{timestamp}}"
+  }],
+  "provisioners": [
+    {
+    "type": "shell",
+    "script": "config/scripts/puppet_bootstrap_centos7.sh"
+    },
+    {
+    "type": "puppet-masterless",
+    "manifest_file": "config/manifests/consul_client.pp",
+    "module_paths": ["modules"],
+    "pause_before": "10s"
+    }
+  ]
+}
