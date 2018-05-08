@@ -143,11 +143,18 @@ export TF_VAR_public_key="$(cat /path/to/consul.pub)"
   $ ssh -i /path/to/mykey.pem centos@ec2-54-172-256-210.compute-1.amazonaws.com
   $ systemctl stop|start httpd
   ```
-  As you start and stop the service, refresh your browser page and watch the members of the web service refresh.
+  - As you start and stop the service, refresh your browser page and watch the members of the web service refresh.
     - This is the result of consul-template watching the web service members and doing the following when the members change:
       - Updating the HAProxy config and reloading the HAProxy Service
       - Updating the index.html page on each web node
-      
+  - Notice that each web host displays its hostname at the bottom of the page so that you know which web host is serving your request.
+
+
+- **Check out service status in the Consul UI.**
+  ```
+  http://ec2-35-170-248-157.compute-1.amazonaws.com:8500
+  ```
+
 - **Examine the consul-template configuration files.**
   - The [HAProxy template file](config/haproxy/haproxy.cfg.tpl)
   - The [consul web service registry configuration files](config/web/web.json). [consul-template](config/consul-template/consul-template.d/consul-template.json) config file.
@@ -160,6 +167,13 @@ export TF_VAR_public_key="$(cat /path/to/consul.pub)"
   $ cd /var/www/html
   $ cd /tmp
   ```
+
+## Summary
+In this demo, you did the following:
+- Successfully deployed five web service nodes, three Consul servers and an HAProxy node.
+  - Each web host registers its web service automatically to the Consul cluster.
+  - Consul-template watches the web service.
+  - If there are changes, consul-template updates the HAProxy config and reloads the service in addition to updating the index.html file on each web host, adding or removing new or dead web service members.
 
 ### Tools used in this demo:
 - Packer
