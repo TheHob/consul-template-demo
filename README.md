@@ -52,7 +52,7 @@ consul-template-demo# Demo: Service Discovery with Consul Template
   ```
   cd ~/path/to/consul-template-demo/packer
   ```
-- **Let's build two AMIs.** Run (these can be run simultaneously in separate terminal windows):
+- **Let's build two AMIs.** If you prefer not to build new AMIs, you can use the AMIs already specified in `variables.tf` as I've made them public. If you'd like to build new AMIs, run the following (these can be run simultaneously in separate terminal windows):
   ```
   # Build the consul server puppet-bootstrapped AMI
   $ packer build -var-file=/path/to/.aws/packer_creds.json consul_server.json
@@ -61,8 +61,9 @@ consul-template-demo# Demo: Service Discovery with Consul Template
   $ packer build -var-file=/path/to/.aws/packer_creds.json consul_client.json
   ```
   These will take a few minutes to run. They are building from the AWS Marketplace CentOS 7 AMIs.
+
 - Once your images are built, do the following:
-  - **Note the AMI id that resulted from the consul server build** and update the `ami` lookup selector in your `variables.tf` file:
+  - **If you built images, note the AMI id that resulted from the consul server build** and update the `ami` lookup selector in your `variables.tf` file:
     ```
     // Add AMI id here to build a consul cluster with
     // consul installed and puppet boostrapped
@@ -72,7 +73,7 @@ consul-template-demo# Demo: Service Discovery with Consul Template
       }
     }
     ```
-  - **Copy and paste the AMI id that resulted from the consul client build** and update the `client_ami` lookup selector in your `variables.tf` file:
+  - **If you built images, copy and paste the AMI id that resulted from the consul client build** and update the `client_ami` lookup selector in your `variables.tf` file:
     ```
     // Add AMI ID here to build hosts with puppet and
     // consul agent bootstrapped
@@ -174,6 +175,8 @@ In this demo, you did the following:
   - Each web host registers its web service automatically to the Consul cluster.
   - Consul-template watches the web service.
   - If there are changes, consul-template updates the HAProxy config and reloads the service in addition to updating the index.html file on each web host, adding or removing new or dead web service members.
+
+This is a simple example of how consul-template can make powerful changes in a completely automatic, nearly real-time cadence without refactoring your applications.
 
 ### Tools used in this demo:
 - Packer
