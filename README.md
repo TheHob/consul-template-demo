@@ -1,4 +1,4 @@
-# Demo: Service Discovery with Consul Template
+consul-template-demo# Demo: Service Discovery with Consul Template
 
 # This repository will enable you to do the following
 - **Create two base images with Packer:**
@@ -42,27 +42,15 @@
   This will be important later. Remember where you save the public and private key.
 - **Clone this repository.**
   ```
-  $ git clone git@github.com:TheHob/terraform-demo.git
+  $ git clone git@github.com:TheHob/consul-template-demo.git
   ```
 
 ## Instructions
 - **Complete pre-requisites above.**
 - **Open a terminal.**
-- **Choose an arbitrary, unique key name (one that doesn't already exist in your AWS account). Specify it when prompted when you run `terraform plan` and `terraform apply`.
-
-Terraform will create this deploy key for you based on the key contents you provide.
-
-As an alternative to specifying the key when you run `terraform apply`, you can add it to your terraform.tfvars file, your workspace variables in Terraform Enterprise, or you can export it as an environment variable. The first and third options are detailed below.**
-```
-$ export TF_VAR_key_name='chad-consul'
-# OR
-$ vi terraform.tfvars
-# Add the below line without a comment:
-# key_name = "chad-consul"
-```
 - **Change into the packer directory inside the repository.**
   ```
-  cd ~/path/to/terraform-demo/packer
+  cd ~/path/to/consul-template-demo/packer
   ```
 - **Let's build two AMIs.** Run (these can be run simultaneously in separate terminal windows):
   ```
@@ -72,32 +60,44 @@ $ vi terraform.tfvars
   # Build the puppet and consul agent-boostrapped AMI
   $ packer build -var-file=/path/to/.aws/packer_creds.json consul_client.json
   ```
-  These will take a few minutes to run.
-- When your images are built, do the following:
+  These will take a few minutes to run. They are building from the AWS Marketplace CentOS 7 AMIs.
+- Once your images are built, do the following:
   - **Note the AMI id that resulted from the consul server build** and update the `ami` lookup selector in your `variables.tf` file:
     ```
     // Add AMI id here to build a consul cluster with
     // consul installed and puppet boostrapped
-    variable "ami" {
+    variable "server_ami" {
       default = {
         us-east-1-centos7 = "ami-mysweetserver"
       }
     }
     ```
-  - **Copy and paste the AMI id that resulted from the consul client build** and update the `boostrapped_ami` lookup selector in your `variables.tf` file:
+  - **Copy and paste the AMI id that resulted from the consul client build** and update the `client_ami` lookup selector in your `variables.tf` file:
     ```
     // Add AMI ID here to build hosts with puppet and
     // consul agent bootstrapped
-    variable "bootstrapped_ami" {
+    variable "client_ami" {
       default = "ami-mysweetclient"
     }
     ```
 - Now let's get rolling.
 - **Change directories into the root of the repository.**
   ```
-  $ cd /path/to/terraform-demo
+  $ cd /path/to/consul-template-demo
   # Make sure you get any necessary modules
   $ terraform get
+  ```
+  - **Choose an arbitrary, unique key name (one that doesn't already exist in your AWS account). Specify it when prompted when you run `terraform plan` and `terraform apply`.
+
+  Terraform will create this deploy key for you based on the key contents you provide.
+
+  As an alternative to specifying the key when you run `terraform apply`, you can add it to your terraform.tfvars file, your workspace variables in Terraform Enterprise, or you can export it as an environment variable. The first and third options are detailed below.**
+  ```
+  $ export TF_VAR_key_name='chad-consul'
+  # OR
+  $ vi terraform.tfvars
+  # Add the below line without a comment:
+  # key_name = "chad-consul"
   ```
 
 - **Set your variables as environment variables, in a terraform.tfvars file or in your Terraform Enterprise workspace.**
@@ -105,7 +105,7 @@ $ vi terraform.tfvars
 export TF_VAR_key_name=chad-consul
 export TF_VAR_cluster_name="chad_dev"
 export TF_VAR_private_key="$(cat /path/to/private_key.pem)"
-export TF_VAR_private_key='$(cat /path/to/consul.pub)'
+export TF_VAR_public_key="$(cat /path/to/consul.pub)"
 ```
 - **Let's make sure the consul cluster and web application are ready to build.**  Run the below to make sure the cluster will build correctly (note that you'll need to tell Terraform where your `credentials` file is if you didn't place it in `~/.aws`.):
   ```
@@ -142,6 +142,23 @@ export TF_VAR_private_key='$(cat /path/to/consul.pub)'
   ```
   $ ssh -i /path/to/mykey.pem centos@ec2-54-172-256-210.compute-1.amazonaws.com
   $ systemctl stop|start httpd
+  ```
+  As you start and stop the service, refresh your browser page and watch the members of the web service refresh.
+    - This is the result of consul-template watching the web service members and doing the following when the members change:
+      - Updating the HAProxy config and reloading the HAProxy Service
+      - Updating the index.html page on each web node
+      
+- **Examine the consul-template configuration files.**
+  - The [HAProxy template file](config/haproxy/haproxy.cfg.tpl)
+  - The [consul web service registry configuration files](config/web/web.json). [consul-template](config/consul-template/consul-template.d/consul-template.json) config file.
+  - The [index.html template file](config/httpd/index.html.tpl)
+  - You can also inspect them on the hosts.
+  ```
+  $ ssh -i /path/to/mykey.pem centos@ec2-54-172-256-210.compute-1.amazonaws.com
+  $ cd /etc/consul-template.d
+  $ cd /etc/consul
+  $ cd /var/www/html
+  $ cd /tmp
   ```
 
 ### Tools used in this demo:

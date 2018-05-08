@@ -25,16 +25,16 @@ variable "private_key" {
 
 // AMI id that will be used to build a consul cluster
 // with consul installed and puppet boostrapped
-variable "ami" {
+variable "server_ami" {
   default = {
-    us-east-1-centos7 = "ami-fdf83e80"
+    us-east-1-centos7 = "ami-01558cebad47c7a9a"
   }
 }
 
 // AMI ID here that will be used to build hosts with
 // puppet and the consul agent bootstrapped
-variable "bootstrapped_ami" {
-  default = "ami-6807c115"
+variable "client_ami" {
+  default = "ami-0b85f12802faa0e0a"
 }
 
 variable "platform" {

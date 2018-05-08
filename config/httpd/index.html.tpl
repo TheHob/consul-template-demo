@@ -2,14 +2,13 @@
 <html>
 <head>
 <div id="header">
-   <img src="images/hashicorp.png" alt="logo" />
+   <center><img src="images/hashicorp.png" alt="logo" /></center>
 </div>
 </head>
 <style>
 body {
     font: bold 28px Verdana, Arial, sans-serif;
-    background-color: #FFFFFF;
-    background-image: url("images/consul.jpg");
+    background-color: #B73A6F;
 
 }
 h3 {
@@ -30,10 +29,4 @@ Name: {{.Node}} <br /> IP address: {{.Address}} <br /> Listening on: {{.Port}} <
 Current host: HOSTNAME
 </h4>
 </body>
-<div class="siteFooterBar">
-    <div class="content">
-        <img src="images/terraform.jpg">
-            <div class="foot"></div>
-    </div>
-</div>
 </html>

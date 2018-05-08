@@ -1,9 +1,9 @@
 # Create a consul-supported web application
 resource "aws_instance" "web" {
-  ami             = "${var.bootstrapped_ami}"
+  ami             = "${var.client_ami}"
   instance_type   = "t2.micro"
   depends_on      = ["module.consul"]
-  key_name        = "consul"
+  key_name        = "${var.key_name}"
   count           = "5"
   security_groups = ["${module.consul.security_group}"]
   connection {
@@ -83,13 +83,14 @@ EOF
 
   provisioner "file" {
     source = "config/httpd/images"
-    destination = "/var/www/html"
+    destination = "/tmp"
   }
 
-  # Move index template, upstart and consul-template configs into place
+  # Move index template, images, upstart and consul-template configs into place
   # Start consul-template monitoring (monitoring web service via consul)
   provisioner "remote-exec" {
       inline = [
+          "sudo mv /tmp/images /var/www/html/images",
           "sudo mkdir -p /etc/consul-template.d",
           "sudo rsync -avz /tmp/index.html.tpl /root/index.html.tpl --delete",
           "sudo rsync -avz /tmp/consul-template.json /etc/consul-template.d/consul-template.json --delete",

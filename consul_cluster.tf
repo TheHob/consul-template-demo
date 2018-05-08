@@ -14,6 +14,6 @@ module "consul" {
   key_name    = "${var.key_name}"
   private_key = "${var.private_key}"
   platform    = "${var.platform}"
-  ami         = "${var.ami}"
+  ami         = "${var.server_ami}"
   servers     = "3"
 }
