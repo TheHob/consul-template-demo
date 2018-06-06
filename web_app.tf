@@ -1,7 +1,7 @@
-# Create a consul-supported web application
+# Create a consul-supported web application 
 resource "aws_instance" "web" {
   ami             = "${var.client_ami}"
-  instance_type   = "t2.small"
+  instance_type   = "t2.micro"
   depends_on      = ["module.consul"]
   key_name        = "${var.key_name}"
   count           = "5"
