@@ -8,7 +8,8 @@ resource "aws_instance" "haproxy" {
       user = "centos"
       private_key = "${var.private_key}"
   }
-
+  # Comment
+  
   # TODO handle this with puppet
   provisioner "remote-exec" {
       inline = [
