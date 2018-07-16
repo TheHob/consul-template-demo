@@ -4,6 +4,8 @@ variable "region" {
   default = "us-east-1"
 }
 
+// Comment
+
 // Add the location of your credentials here
 variable "aws_cred_file" {
   description = "Location of AWS credentials"
