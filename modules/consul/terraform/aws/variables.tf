@@ -2,7 +2,7 @@ variable "platform" {
   default     = "ubuntu"
   description = "The OS Platform"
 }
-
+# Comment for testing
 variable "user" {
   default = {
     ubuntu  = "ubuntu"
