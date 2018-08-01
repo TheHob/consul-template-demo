@@ -2,6 +2,7 @@ provider "aws" {
   shared_credentials_file = "${var.aws_cred_file}"
   region  = "${var.region}"
 }
+//comment
 
 resource "aws_key_pair" "consul" {
   key_name   = "${var.key_name}"
