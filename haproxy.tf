@@ -1,6 +1,6 @@
 resource "aws_instance" "haproxy" {
   ami           = "${var.client_ami}"
-  instance_type = "t2.micro"
+  instance_type = "t2.small"
   key_name = "${var.key_name}"
   security_groups = ["${module.consul.security_group}"]
   depends_on = ["module.consul"]
