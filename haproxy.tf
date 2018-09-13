@@ -9,6 +9,7 @@ resource "aws_instance" "haproxy" {
       private_key = "${var.private_key}"
   }
 
+  # Comment
   # TODO handle this with puppet
   provisioner "remote-exec" {
       inline = [
